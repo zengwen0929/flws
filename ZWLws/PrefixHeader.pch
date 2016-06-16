@@ -1,0 +1,61 @@
+//
+//  PrefixHeader.pch
+//  01-百思不得姐
+//
+//  Created by xiaomage on 15/7/22.
+//  Copyright (c) 2015年 小码哥. All rights reserved.
+//
+
+#ifndef _1_______PrefixHeader_pch
+#define _1_______PrefixHeader_pch
+
+#import "UIView+Extension.h"
+#import "UIBarButtonItem+Extension.h"
+#import "NSDate+Extension.h"
+#import "NetworkHelper.h"
+#import "MJExtension.h"
+#import "UIImageView+WebCache.h"
+#import "FMDB.h"
+#import "MBProgressHUD+MJ.h"
+
+
+#ifdef DEBUG
+#define ZWLog(...) NSLog(__VA_ARGS__)
+#else
+#define ZWLog(...)
+#endif
+
+#define ZWGuideCount 4
+
+/*** Screen Height Width */
+#define Screen_Height [[UIScreen mainScreen] bounds].size.height //主屏幕的高度
+#define Screen_Width  [[UIScreen mainScreen] bounds].size.width  //主屏幕的宽度
+#define ZWLogFunc ZWLog(@"%s", __func__)
+// RGB颜色
+#define ZWRGBColor(r, g, b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1.0]
+
+#define ZWGlobalBg ZWRGBColor(223, 223, 223)
+
+
+//URL
+#define scrollButtonTitle @"http://api.liwushuo.com/v2/channels/preset?gender=1&generation=4"
+#define CarouselURL @"http://api.liwushuo.com/v2/banners?channel=iOS"
+#define CellScrollURL @"http://api.liwushuo.com/v2/secondary_banners?gender=1&generation=4"
+#define PresentURL @"http://api.liwushuo.com/v2/channels/100/items?ad=1&gender=1&generation=1&limit=20&offset=0"
+#define NextURL @"http://api.liwushuo.com/v2/channels/%@/items?gender=1&generation=4&limit=20&offset=0"
+#define carouselNextURL @"http://api.liwushuo.com/v2/collections/180/posts?gender=1&generation=0&limit=20&offset=0"
+#define kStrategySpecialURL @"http://api.liwushuo.com/v2/collections?limit=6&offset=0"
+#define kStrategyButtonURL @"http://api.liwushuo.com/v2/channel_groups/all"
+#define kGiftURL @"http://api.liwushuo.com/v2/item_categories/tree"
+#define scrollButton @"http://api.liwushuo.com/v2/secondary_banners?gender=1&generation=0"//轮播图下按钮
+#define selectShenqi @"http://api.liwushuo.com/v2/search/item_by_type?limit=20&offset=0"//选礼神器
+//对象风格品类
+#define duixiangURL @"http://api.liwushuo.com/v2/channel_groups/all?"
+
+//热门分类个性配饰
+#define hotfenleiURL @"http://api.liwushuo.com/v2/item_categories/tree?"
+//专题
+#define zhuantiURL @"http://api.liwushuo.com/v2/collections?limit=6&offset=0"
+
+
+#endif

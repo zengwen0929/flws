@@ -10,6 +10,7 @@
 #import "ZWPresentModel.h"
 #import "ZWCommentsController.h"
 #import "MTDealTool.h"
+#import "DOPScrollableActionSheet.h"
 
 @interface ZWDetailViewController ()
 @property (nonatomic,strong)UIButton *likeBtn;
@@ -132,8 +133,33 @@
 - (void)shareClick:(UIButton *)btn{
     
     NSLog(@"btn = %ld",btn.tag);
+    DOPAction *action1 = [[DOPAction alloc] initWithName:@"朋友圈" iconName:@"iconCircleShare_50x50_@2x" handler:^{
+        ZWLog(@"123456");
+    }];
+    DOPAction *action2 = [[DOPAction alloc] initWithName:@"微信好友" iconName:@"icon_thirdpart_wechat_50x50_@2x" handler:^{
+         ZWLog(@"234561");
+    }];
+    DOPAction *action3 = [[DOPAction alloc] initWithName:@"微博" iconName:@"icon_thirdpart_sina_50x50_@2x" handler:^{
+         ZWLog(@"345612");
+    }];
+    DOPAction *action4 = [[DOPAction alloc] initWithName:@"qq空间" iconName:@"iconZoneShare_50x50_@2x" handler:^{
+         ZWLog(@"456123");
+    }];
+    DOPAction *action5 = [[DOPAction alloc] initWithName:@"QQ好友" iconName:@"icon_thirdpart_qq_50x50_@2x" handler:^{
+         ZWLog(@"561234");
+    }];
+    DOPAction *action6 = [[DOPAction alloc] initWithName:@"复制链接" iconName:@"iconLinkShare_50x50_@2x" handler:^{
+         ZWLog(@"612345");
+    }];
+ 
+
+   NSArray *actions = @[@"",
+                @[action1, action2, action3],
+                @"",
+                @[ action4,action5,action6]];
     
-    
+    DOPScrollableActionSheet *as = [[DOPScrollableActionSheet alloc] initWithActionArray:actions];
+    [as show];
     
 }
 

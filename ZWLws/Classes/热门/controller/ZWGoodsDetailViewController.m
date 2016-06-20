@@ -10,10 +10,8 @@
 #import "ZWXiangQingViewController.h"
 #import "ZWDanPingViewController.h"
 #import "ZWPinLunViewController.h"
+#import "ZWDetailModel.h"
 
-#define danpingURL @"http://api.liwushuo.com/v2/items/%@/recommend?"
-#define xiangqingURL @"http://api.liwushuo.com/v2/items/%@?"
-#define pinlunURL @"http://api.liwushuo.com/v2/items/%@/comments?limit=20&offset=0"
 
 @interface ZWGoodsDetailViewController ()<UIScrollViewDelegate>
 @property (nonatomic,strong)NSArray *titles2;
@@ -21,6 +19,10 @@
 @property (nonatomic,strong) UIView *indicatorView;
 @property (nonatomic,strong) UIScrollView *contentView;
 @property (nonatomic,strong) UIButton *selectedButton;
+@property (nonatomic,strong)UIButton *likeBtn;
+@property (nonatomic,strong)UIButton *shareBtn;
+@property (nonatomic,strong)UIButton *buyBtn;
+@property (nonatomic,strong) ZWDetailModel *model;
 
 @end
 
@@ -54,20 +56,50 @@
     [super viewDidLoad];
     self.titles2 = @[@"单品",@"详情",@"评论"];
     [self setNavigationBar];
-    [self setupChildVces];
+    [self getData];
+    
     [self setupTitlesView];
-    [self setupContentView];
+    [self setBottomTabBar];
     
     // 初始化子控制器
     self.automaticallyAdjustsScrollViewInsets = NO;
- //   [self getButtonTitleData];
+
+}
+
+- (void)getData{
+
     
-//[self createPullDownButton];
     
+    [NetworkHelper Get:[NSString stringWithFormat:danpingURL,self.ID] parameter:nil success:^(id responseObject) {
+        ZWLog(@"url = %@",[NSString stringWithFormat:danpingURL,self.ID]);
+        NSLog(@"%@",responseObject[@"data"]);
+        //        NSArray * array = [ZWHotModel objectArrayWithKeyValuesArray:responseObject[@"data"][@"items"]];
+        //        [self.dataArray addObjectsFromArray:array];
+        //        //        ZWHotModel *m = _dataArray[0];
+        //        //        ZWDataModel *model = m.data;
+        //        //        NSLog(@"%@",m.type);
+        //        //        NSLog(@"%@",model.name);
+        //        [self.collectionView reloadData];
+    } failure:^(NSError *error) {
+        NSLog(@"%@",error);
+    }];
     
+
     
-    
-    
+    [NetworkHelper Get:[NSString stringWithFormat:xiangqingURL,self.ID] parameter:nil success:^(id responseObject) {
+        ZWLog(@"url = %@",[NSString stringWithFormat:xiangqingURL,self.ID]);
+     //   NSLog(@"%@",responseObject[@"data"]);
+        ZWDetailModel *model = [ZWDetailModel objectWithKeyValues:responseObject[@"data"]];
+        self.model = model;
+        [self setupChildVces];
+        
+
+        [self setupContentView];
+        NSLog(@"%@",model.image_urls);
+    } failure:^(NSError *error) {
+        NSLog(@"%@",error);
+    }];
+
 }
 
 //设置导航栏
@@ -86,15 +118,17 @@
         if (i==0) {
             ZWDanPingViewController *d = [[ZWDanPingViewController alloc] init];
             d.ID =self.ID;
+            d.model = self.model;
             [self addChildViewController:d];
         }
         if (i == 1) {
             ZWXiangQingViewController *x = [[ZWXiangQingViewController alloc] init];
-            x.ID = self.ID;
+            
+            x.model = self.model;
             [self addChildViewController:x];
         }
         
-        else{
+         if (i == 2) {
             ZWPinLunViewController *p = [[ZWPinLunViewController alloc] init];
             p.ID = self.ID;
             [self addChildViewController:p];
@@ -207,8 +241,7 @@
 #pragma mark - <UIScrollViewDelegate>
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
-    NSLog(@"--%s",__func__);
-    // 一些临时变量
+ 
 
     NSInteger index = scrollView.contentOffset.x / scrollView.width;
     // 让对应的顶部标题居中显示
@@ -237,6 +270,45 @@
     
 }
 
+- (void)setBottomTabBar{
+    
+    
+    UIView * view =  [[UIView alloc] initWithFrame:CGRectMake(0, Screen_Height-108, Screen_Width, 44)];
+    view.backgroundColor = [UIColor grayColor];
+    [self.view addSubview:view];
+    
+    self.likeBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, 5, (Screen_Width - 22)/3 , 30)];
+    
+    [self.likeBtn setTitle:@"喜欢"forState:UIControlStateNormal];
+    [self.likeBtn setImage:[UIImage imageNamed:@"baichuan_navigation_favorites_21x21_@2x"] forState:UIControlStateNormal];
+    
+    [self.likeBtn setImage:[UIImage imageNamed:@"content-details_like_selected_16x16_@3x"] forState:UIControlStateSelected];
+    self.likeBtn.tag = 101;
+    [self.likeBtn addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [view addSubview:self.likeBtn];
+    
+    self.shareBtn = [[UIButton alloc] initWithFrame:CGRectMake((Screen_Width - 22)/3 +11, 5, (Screen_Width - 22)/3, 30)];
+    [self.shareBtn setTitle:@"分享" forState:UIControlStateNormal];
+    [self.shareBtn setImage:[UIImage imageNamed:@"baichuan_navigation_share_21x21_@2x"] forState:UIControlStateNormal];
+    
+    
+    self.shareBtn.tag = 102;
+    [self.shareBtn addTarget:self action:@selector(shareClick:) forControlEvents:UIControlEventTouchUpInside];
+    [view addSubview:self.shareBtn];
+    //    self.shareBtn.backgroundColor = [UIColor redColor];
+    //
+    self.buyBtn = [[UIButton alloc] initWithFrame:CGRectMake((Screen_Width - 22)/3 +(Screen_Width - 22)/3 +11 +1, 5, (Screen_Width - 22)/3, 30)];
+    //    self.buyBtn.backgroundColor = [UIColor greenColor];
+    [self.buyBtn setImage:[UIImage imageNamed:@"baichuan_navigation_comments_21x21_@2x"] forState:UIControlStateNormal];
+    
+    [self.buyBtn setTitle:@"去购买" forState:UIControlStateNormal];
+    self.buyBtn.tag = 103;
+    [self.buyBtn addTarget:self action:@selector(buyClick:) forControlEvents:UIControlEventTouchUpInside];
+    [view addSubview:self.buyBtn];
+    
+    
+    
+}
 
 
 @end

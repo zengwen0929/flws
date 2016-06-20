@@ -109,7 +109,7 @@
 - (void)getData2{
     
     [NetworkHelper Get:url parameter:nil success:^(id responseObject) {
-        NSLog(@"%@",responseObject[@"data"][@"items"]);
+      //  NSLog(@"%@",responseObject[@"data"][@"items"]);
         NSArray * array = [ZWHotModel objectArrayWithKeyValuesArray:responseObject[@"data"][@"items"]];
         [self.dataArray addObjectsFromArray:array];
 //        ZWHotModel *m = _dataArray[0];

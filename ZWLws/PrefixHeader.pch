@@ -56,6 +56,11 @@
 #define hotfenleiURL @"http://api.liwushuo.com/v2/item_categories/tree?"
 //专题
 #define zhuantiURL @"http://api.liwushuo.com/v2/collections?limit=6&offset=0"
+//详情页面
+#define danpingURL @"http://api.liwushuo.com/v2/items/%@/recommend?"
+#define xiangqingURL @"http://api.liwushuo.com/v2/items/%@?"
+#define pinlunURL @"http://api.liwushuo.com/v2/items/%@/comments?limit=20&offset=0"
+
 
 
 #endif

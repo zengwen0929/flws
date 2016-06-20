@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+@class ZWDetailModel;
 
 @interface ZWXiangQingViewController : UIViewController
+
 @property (nonatomic,copy) NSString *ID;
+@property (nonatomic,strong) ZWDetailModel *model;
 @end

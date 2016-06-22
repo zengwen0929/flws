@@ -17,6 +17,7 @@
 #import "UIImageView+WebCache.h"
 #import "FMDB.h"
 #import "MBProgressHUD+MJ.h"
+#import "MJRefresh.h"
 
 
 #ifdef DEBUG
@@ -41,7 +42,7 @@
 #define scrollButtonTitle @"http://api.liwushuo.com/v2/channels/preset?gender=1&generation=4"
 #define CarouselURL @"http://api.liwushuo.com/v2/banners?channel=iOS"
 #define CellScrollURL @"http://api.liwushuo.com/v2/secondary_banners?gender=1&generation=4"
-#define PresentURL @"http://api.liwushuo.com/v2/channels/100/items?ad=1&gender=1&generation=1&limit=20&offset=0"
+#define PresentURL @"http://api.liwushuo.com/v2/channels/100/items"
 #define NextURL @"http://api.liwushuo.com/v2/channels/%@/items?gender=1&generation=4&limit=20&offset=0"
 #define carouselNextURL @"http://api.liwushuo.com/v2/collections/180/posts?gender=1&generation=0&limit=20&offset=0"
 #define kStrategySpecialURL @"http://api.liwushuo.com/v2/collections?limit=6&offset=0"

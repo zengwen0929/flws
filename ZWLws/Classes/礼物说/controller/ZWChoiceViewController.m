@@ -20,6 +20,9 @@
 @property (nonatomic,strong) NSMutableArray *dataID;
 @property (nonatomic,strong) NSMutableArray *menuArray;
 @property (nonatomic,strong) NSMutableArray *PresentArray;
+@property (nonatomic,assign) NSInteger *page;
+/** 上一次的请求参数 */
+@property (nonatomic, strong) NSDictionary *params;
 
 @end
 
@@ -67,11 +70,19 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tabBarDidSelect:) name:@"ButtonDidClickNotification" object:nil];
     [self getData];
     [self getData2];
-    [self getData3];
-    
+    // 添加刷新控件
+    [self setupRefresh];
 
 }
-
+- (void)setupRefresh
+{
+    self.tableView.header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(getData3)];
+    // 自动改变透明度
+    self.tableView.header.autoChangeAlpha = YES;
+    [self.tableView.header beginRefreshing];
+    
+    self.tableView.footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(getMoreDatas)];
+}
 - (void)tabBarDidSelect:(NSNotification *)notification
 {
     ZWOther2ViewController *other = [[ZWOther2ViewController alloc] init];
@@ -87,16 +98,77 @@
    
 }
 #pragma mark - 最下面的cell数据
-- (void)getData3{
+- (void)getMoreDatas{
     
-    [NetworkHelper Get:PresentURL parameter:nil success:^(id responseObject) {
+    //"http://api.liwushuo.com/v2/channels/100/items?ad=1&gender=1&generation=1&limit=20&offset=%@"
+    
+    // 结束上啦
+    [self.tableView.footer endRefreshing];
+
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"ad"] = @"1";
+    params[@"gender"] = @"1";
+    params[@"generation"] = @"1";
+    params[@"limit"] = @"20";
+    NSInteger page = self.page +20;
+    params[@"offset"] = @(page);
+ 
+    self.params = params;
+    // 结束上啦
+    [self.tableView.footer endRefreshing];
+    [NetworkHelper Get:PresentURL parameter:self.params success:^(id responseObject) {
     //    ZWLog(@"%@",responseObject[@"data"][@"items"]);
         NSArray *array = [ZWPresentModel objectArrayWithKeyValuesArray:responseObject[@"data"][@"items"]];
         [self.PresentArray addObjectsFromArray:array];
     
         [self.tableView reloadData];
+        self.page = page;
+        [self.tableView.footer endRefreshing];
     } failure:^(NSError *error) {
-        ZWLog(@"%@",error);
+        NSLog(@"%@",error);
+        if (self.params != params) return;
+        
+        // 结束刷新
+        [self.tableView.footer endRefreshing];
+    }];
+    
+    
+    
+    
+}
+
+- (void)getData3{
+    
+    //"http://api.liwushuo.com/v2/channels/100/items?ad=1&gender=1&generation=1&limit=20&offset=%@"
+    
+    
+    self.page = 0;
+    
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"ad"] = @"1";
+    params[@"gender"] = @"1";
+    params[@"generation"] = @"1";
+    params[@"limit"] = @"20";
+    params[@"offset"] = @"0";
+    
+    self.params = params;
+    // 结束上啦
+    [self.tableView.footer endRefreshing];
+    [NetworkHelper Get:PresentURL parameter:self.params success:^(id responseObject) {
+        //    ZWLog(@"%@",responseObject[@"data"][@"items"]);
+        NSArray *array = [ZWPresentModel objectArrayWithKeyValuesArray:responseObject[@"data"][@"items"]];
+        [self.PresentArray addObjectsFromArray:array];
+        
+        [self.tableView reloadData];
+        self.page = 0;
+        [self.tableView.header endRefreshing];
+    } failure:^(NSError *error) {
+        NSLog(@"%@",error);
+        if (self.params != params) return;
+        
+        // 结束刷新
+        [self.tableView.header endRefreshing];
     }];
     
     
